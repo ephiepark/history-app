@@ -14,8 +14,7 @@ import {
 } from "firebase/auth";
 import { addDoc, collection, doc, DocumentData, DocumentReference, DocumentSnapshot, Firestore, getDoc, getFirestore, setDoc } from "firebase/firestore";
 import { FirebaseStorage, getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
-import { EventWithId, UserInfo } from "../types";
-import { userInfo } from 'os';
+import { Event, EventWithId, UserInfo } from "../types";
 
 export default class FirebaseApi {
   app: FirebaseApp;

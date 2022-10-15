@@ -23,7 +23,7 @@ export interface WithId {
 export type EventWithId = Event & WithId;
 /*
 {
- title: string;
+  title: string;
   description: string;
   tags: Array<string>;
   userId: string;
