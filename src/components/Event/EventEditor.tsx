@@ -1,4 +1,4 @@
-import { Typography, TextField, Autocomplete, Button } from "@mui/material";
+import { Typography, TextField, Autocomplete, Button, Stack } from "@mui/material";
 import { useState } from "react";
 import { withFirebaseApi, WithFirebaseApiProps } from "../../Firebase";
 import { eventTags } from "../../types";
@@ -32,7 +32,7 @@ const EventEditorBase = (props: {
     initState();
   };
   return (
-    <>
+    <Stack spacing={2}>
       <Typography>{content}</Typography>
       <TextField
         id="title"
@@ -90,7 +90,7 @@ const EventEditorBase = (props: {
         multiline
       />
       <Button variant="contained" onClick={handleSubmit}>Submit</Button>
-    </>
+    </Stack>
   );
 };
 
