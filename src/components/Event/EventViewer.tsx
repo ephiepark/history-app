@@ -1,5 +1,5 @@
 import { WithFirebaseApiProps, withFirebaseApi } from "../../Firebase";
-import { Box, Stack, TextField, Button, CircularProgress, Typography } from "@mui/material";
+import { Box, Stack, TextField, Button, CircularProgress, Typography, Autocomplete } from "@mui/material";
 import { useEffect, useState } from "react";
 import { UserInfo } from "../../types";
 import { useParams } from "react-router-dom";
@@ -16,7 +16,7 @@ const EventViewerBase = (props: WithFirebaseApiProps) => {
     });
   }, []);
   useEffect(() => {
-    if (event?.userId === null) {
+    if (event?.userId == null) {
       return;
     }
     props.firebaseApi.asyncGetUserInfo(event!.userId).then((userInfo: UserInfo | null) => {
@@ -33,6 +33,22 @@ const EventViewerBase = (props: WithFirebaseApiProps) => {
   return (<Stack>
     <Typography>{`Title: ${event.title}`}</Typography>
     <Typography>{`Author: ${author.username}`}</Typography>
+    <Typography>{`Created Time: ${event.createdTime}`}</Typography>
+    <Autocomplete
+      multiple
+      id="tags-outlined"
+      filterSelectedOptions
+      options={event.tags}
+      value={event.tags}
+      renderInput={(params) => (
+        <TextField
+          {...params}
+          label="tags"
+          placeholder="Tags"
+        />
+      )}
+      readOnly
+    />
     <Typography>{`Event Time: ${event.eventTime}`}</Typography>
     <Typography>{`Description: ${event.description}`}</Typography>
   </Stack>);

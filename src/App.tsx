@@ -13,6 +13,7 @@ import {
   Routes,
   Route,
 } from "react-router-dom";
+import EventViewer from './components/Event/EventViewer';
 
 
 const isLoadingState = (state: RootState): boolean => {
@@ -48,6 +49,7 @@ const Body = () => {
         <EditProfile />
       </>} />
       <Route path="/event/new" element={<EventEditor eventId={null} />} />
+      <Route path="/event/:eventId" element={<EventViewer />} />
     </Routes>
   );
 };
