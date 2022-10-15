@@ -71,11 +71,8 @@ const EventEditorBase = (props: {
         renderInput={(params) => (
           <TextField
             {...params}
-            label="filterSelectedOptions"
-            placeholder="Favorites"
-            onChange={(e) => {
-              console.log('aaa', e.target.value);
-            }}
+            label="tags"
+            placeholder="Tags"
           />
         )}
       />
