@@ -3,6 +3,7 @@ import { useEffect } from 'react';
 import Header from './components/Header';
 import Onboarding from './components/Onboarding';
 import EditProfile from './components/EditProfile';
+import EventEditor from './components/Event/EventEditor';
 import { WithFirebaseApiProps, withFirebaseApi } from './Firebase';
 import { useAppDispatch, useAppSelector } from './redux/hooks';
 import { RootState } from './redux/store';
@@ -46,6 +47,7 @@ const Body = () => {
         <Typography>{`Welcome ${userInfo.username}`}</Typography>
         <EditProfile />
       </>} />
+      <Route path="/event/new" element={<EventEditor eventId={null} />} />
     </Routes>
   );
 };
