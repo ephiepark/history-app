@@ -1,9 +1,9 @@
 export const firebaseConfig = {
-  apiKey: "AIzaSyCo5PX4eewyzK1Ecca_hHLaMuQ3smEKt-w",
-  authDomain: "my-login-app-bc956.firebaseapp.com",
-  projectId: "my-login-app-bc956",
-  storageBucket: "my-login-app-bc956.appspot.com",
-  messagingSenderId: "288290421449",
-  appId: "1:288290421449:web:aefd2bc52a291c0fd22b18",
-  measurementId: "G-RVDTTPMFS0"
+  apiKey: "AIzaSyCOIqCYWJdYawUrqQ1jR7ng4UG0LVBtkac",
+  authDomain: "history-app-dev-ef8e3.firebaseapp.com",
+  projectId: "history-app-dev-ef8e3",
+  storageBucket: "history-app-dev-ef8e3.appspot.com",
+  messagingSenderId: "803208009802",
+  appId: "1:803208009802:web:c18377abc93ae55122aeb3",
+  measurementId: "G-28752CG4L9"
 };
