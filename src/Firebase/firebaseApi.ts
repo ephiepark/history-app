@@ -12,9 +12,10 @@ import {
   Unsubscribe,
   User
 } from "firebase/auth";
-import { doc, Firestore, getDoc, getFirestore, setDoc } from "firebase/firestore";
+import { addDoc, collection, doc, DocumentData, DocumentReference, DocumentSnapshot, Firestore, getDoc, getFirestore, setDoc } from "firebase/firestore";
 import { FirebaseStorage, getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
-import { UserInfo } from "../types";
+import { EventWithId, UserInfo } from "../types";
+import { userInfo } from 'os';
 
 export default class FirebaseApi {
   app: FirebaseApp;
@@ -55,7 +56,7 @@ export default class FirebaseApi {
   };
 
   asyncUpdateUserInfo = async (userId: string, userInfo: Partial<UserInfo>) => {
-    await setDoc(this.getUserRef(userId), userInfo, {merge: true} );
+    await setDoc(this.getUserRef(userId), userInfo, { merge: true });
     return await this.asyncGetUserInfo(userId);
   };
 
@@ -80,5 +81,35 @@ export default class FirebaseApi {
   asyncGetURLFromHandle = async (handle: string): Promise<string> => {
     const url = await getDownloadURL(ref(this.storage, handle));
     return url;
-  }
+  };
+
+  getEventRef = (eventId: string) => {
+    return doc(this.firestore, "events", eventId);
+  };
+
+  asyncGetEvent = async (eventId: string): Promise<EventWithId | null> => {
+    const docSnap = await getDoc(this.getEventRef(eventId));
+    if (!docSnap.exists()) {
+      return null;
+    }
+    return this.getEventWithIdFromDocSnapshot(docSnap);
+  };
+
+  getEventWithIdFromDocSnapshot = (doc: DocumentSnapshot<DocumentData>): EventWithId => {
+    return {
+      title: doc.data()!.title,
+      description: doc.data()!.description,
+      tags: doc.data()!.tags,
+      userId: doc.data()!.userId,
+      eventTime: doc.data()!.eventTime,
+      createdTime: doc.data()!.createdTime,
+      id: doc.id,
+    }
+  };
+
+  asyncCreateEvent = async (event: Event): Promise<EventWithId> => {
+    const docRef = await addDoc(collection(this.firestore, "events"), event);
+    const eventWithId = await this.asyncGetEvent(docRef.id);
+    return eventWithId!;
+  };
 };
