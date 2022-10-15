@@ -4,6 +4,7 @@ import { withFirebaseApi, WithFirebaseApiProps } from "../../Firebase";
 import { eventTags } from "../../types";
 import { useAppSelector } from "../../redux/hooks";
 import { RootState } from "../../redux/store";
+import { useNavigate } from 'react-router-dom';
 
 const EventEditorBase = (props: {
   eventId: string | null,
@@ -13,6 +14,8 @@ const EventEditorBase = (props: {
   const [eventTime, setEventTime] = useState<string>('');
   const [tags, setTags] = useState<Array<string>>([]);
   const [description, setDescription] = useState<string>('');
+  const navigate = useNavigate();
+
   const content = props.eventId === null ? 'Add new event' : 'Edit new event';
   const initState = () => {
     setTitle('');
@@ -21,7 +24,7 @@ const EventEditorBase = (props: {
     setDescription('');
   }
   const handleSubmit = async () => {
-    await props.firebaseApi.asyncCreateEvent({
+    const event = await props.firebaseApi.asyncCreateEvent({
       title,
       description,
       eventTime,
@@ -30,6 +33,7 @@ const EventEditorBase = (props: {
       createdTime: Math.floor(Date.now() / 1000),
     });
     initState();
+    navigate(`/event/${event.id}`);
   };
   return (
     <Stack spacing={2}>
