@@ -1,39 +1,63 @@
-import { Typography, TextField, Autocomplete, Button, Stack } from "@mui/material";
-import { useState } from "react";
+import { Typography, TextField, Autocomplete, Button, Stack, CircularProgress } from "@mui/material";
+import { useEffect, useState } from "react";
 import { withFirebaseApi, WithFirebaseApiProps } from "../../Firebase";
-import { eventTags } from "../../types";
+import { eventTags, EventWithId } from "../../types";
 import { useAppSelector } from "../../redux/hooks";
 import { RootState } from "../../redux/store";
 import { useNavigate } from 'react-router-dom';
 
-const EventEditorBase = (props: {
+const EventEditModeBase = (props: {
   eventId: string | null,
+  onClick: (eventId: string) => void,
 } & WithFirebaseApiProps) => {
   const userId = useAppSelector((state: RootState) => state.user.userId);
+  const [event, setEvent] = useState<EventWithId | null>(null);
   const [title, setTitle] = useState<string>('');
   const [eventTime, setEventTime] = useState<string>('');
   const [tags, setTags] = useState<Array<string>>([]);
   const [description, setDescription] = useState<string>('');
-  const navigate = useNavigate();
 
-  const content = props.eventId === null ? 'Add new event' : 'Edit new event';
-  const initState = () => {
-    setTitle('');
-    setEventTime('');
-    setTags([]);
-    setDescription('');
-  }
-  const handleSubmit = async () => {
-    const event = await props.firebaseApi.asyncCreateEvent({
-      title,
-      description,
-      eventTime,
-      tags,
-      userId: userId!,
-      createdTime: Math.floor(Date.now() / 1000),
+  useEffect(() => {
+    if (props.eventId === null) {
+      return;
+    }
+    props.firebaseApi.asyncGetEvent(props.eventId!).then((event: EventWithId | null) => {
+      setEvent(event);
+      setTitle(event?.title ?? '');
+      setEventTime(event?.eventTime ?? '');
+      setTags(event?.tags ?? []);
+      setDescription(event?.description ?? '');
     });
-    initState();
-    navigate(`/event/${event.id}`);
+  }, [props.eventId]);
+
+  if (props.eventId !== null && event === null) {
+    return <CircularProgress />;
+  }
+
+  const content = props.eventId === null ? 'Add new event' : 'Edit event';
+  const handleSubmit = async () => {
+    console.log(description);
+    if (props.eventId === null) {
+      const event = await props.firebaseApi.asyncCreateEvent({
+        title,
+        description,
+        eventTime,
+        tags,
+        userId: userId!,
+        createdTime: Math.floor(Date.now() / 1000),
+      });
+      props.onClick(event.id);
+    } else {
+      const event = await props.firebaseApi.asyncUpdateEvent(props.eventId, {
+        title,
+        description,
+        eventTime,
+        tags,
+        userId: userId!,
+        createdTime: Math.floor(Date.now() / 1000),
+      });
+      props.onClick(props.eventId);
+    }
   };
   return (
     <Stack spacing={2}>
@@ -93,6 +117,17 @@ const EventEditorBase = (props: {
       <Button variant="contained" onClick={handleSubmit}>Submit</Button>
     </Stack>
   );
+};
+
+export const EventEditMode = withFirebaseApi(EventEditModeBase);
+
+const EventEditorBase = (props: {
+}) => {
+  const navigate = useNavigate();
+
+  return (<>
+    <EventEditMode eventId={null} onClick={(eventId: string) => navigate(`/event/${eventId}`)} />
+  </>);
 };
 
 export default withFirebaseApi(EventEditorBase);

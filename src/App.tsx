@@ -48,7 +48,7 @@ const Body = () => {
         <Typography>{`Welcome ${userInfo.username}`}</Typography>
         <EditProfile />
       </>} />
-      <Route path="/event/new" element={<EventEditor eventId={null} />} />
+      <Route path="/event/new" element={<EventEditor />} />
       <Route path="/event/:eventId" element={<EventViewer />} />
     </Routes>
   );

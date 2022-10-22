@@ -111,4 +111,9 @@ export default class FirebaseApi {
     const eventWithId = await this.asyncGetEvent(docRef.id);
     return eventWithId!;
   };
+
+  asyncUpdateEvent = async (eventId: string, event: Partial<Event>) => {
+    await setDoc(this.getEventRef(eventId), event, { merge: true });
+    return await this.asyncGetEvent(eventId);
+  };
 };
