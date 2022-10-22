@@ -14,10 +14,14 @@ const TimelineBase = (props: WithFirebaseApiProps) => {
       props.firebaseApi.asyncGetTimeline(tags).then((events) => setEvents(events));
     }
   }, [tags]);
+  let body = null;
   if (tags.length === 0) {
-    return <Typography>There needs to be at least one tag</Typography>;
+    body = <Typography>There needs to be at least one tag</Typography>;
+  } else if (events === null) {
+    body = <CircularProgress />;
+  } else {
+    body = events.map((event) => <EventCard key={event.id} event={event} />);
   }
-  const body = events === null ? <CircularProgress /> : events.map((event) => <EventCard key={event.id} event={event} />);
   return <Stack spacing={2}>
     <Autocomplete
       multiple
