@@ -12,7 +12,7 @@ import {
   Unsubscribe,
   User
 } from "firebase/auth";
-import { addDoc, collection, doc, DocumentData, DocumentReference, DocumentSnapshot, Firestore, getDoc, getDocs, getFirestore, orderBy, query, setDoc } from "firebase/firestore";
+import { addDoc, collection, doc, DocumentData, DocumentReference, DocumentSnapshot, Firestore, getDoc, getDocs, getFirestore, orderBy, query, setDoc, where } from "firebase/firestore";
 import { FirebaseStorage, getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
 import { Event, EventWithId, UserInfo } from "../types";
 
@@ -117,8 +117,8 @@ export default class FirebaseApi {
     return await this.asyncGetEvent(eventId);
   };
 
-  asyncGetTimeline = async (): Promise<Array<EventWithId>> => {
-    const q = query(collection(this.firestore, "events"), orderBy("eventTime", "desc"));
+  asyncGetTimeline = async (tags: Array<string>): Promise<Array<EventWithId>> => {
+    const q = query(collection(this.firestore, "events"), where("tags", 'array-contains-any', tags), orderBy("eventTime", "desc"));
     const querySnapshot = await getDocs(q);
     const events: Array<EventWithId> = [];
     querySnapshot.forEach((doc) => {

@@ -1,21 +1,42 @@
-import { CircularProgress } from "@mui/material";
+import { Autocomplete, CircularProgress, TextField, Typography } from "@mui/material";
 import { Stack } from "@mui/system";
 import { useEffect, useState } from "react";
 import { withFirebaseApi, WithFirebaseApiProps } from "../../Firebase";
-import { EventWithId } from "../../types";
+import { eventTags, EventWithId } from "../../types";
 import EventCard from "../Event/EventCard";
 
 const TimelineBase = (props: WithFirebaseApiProps) => {
   const [events, setEvents] = useState<null | Array<EventWithId>>(null);
+  const [tags, setTags] = useState<Array<string>>(eventTags);
   useEffect(() => {
-    props.firebaseApi.asyncGetTimeline().then((events) => setEvents(events));
-  }, []);
-
-  if (events === null) {
-    return <CircularProgress />;
+    setEvents(null);
+    if (tags.length > 0) {
+      props.firebaseApi.asyncGetTimeline(tags).then((events) => setEvents(events));
+    }
+  }, [tags]);
+  if (tags.length === 0) {
+    return <Typography>There needs to be at least one tag</Typography>;
   }
+  const body = events === null ? <CircularProgress /> : events.map((event) => <EventCard key={event.id} event={event} />);
   return <Stack spacing={2}>
-    {events.map((event) => <EventCard key={event.id} event={event} />)}
+    <Autocomplete
+      multiple
+      id="tags-outlined"
+      options={eventTags}
+      filterSelectedOptions
+      value={tags}
+      onChange={(_e, v) => {
+        setTags(v);
+      }}
+      renderInput={(params) => (
+        <TextField
+          {...params}
+          label="tags"
+          placeholder="Tags"
+        />
+      )}
+    />
+    {body}
   </Stack>;
 };
 
