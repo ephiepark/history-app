@@ -11,6 +11,7 @@ const EventViewModeBase = (props: {
 } & WithFirebaseApiProps) => {
   const [event, setEvent] = useState<EventWithId | null>(null);
   const [author, setAuthor] = useState<UserInfo | null>(null);
+  const [imageUrl, setImageUrl] = useState<string | null | undefined>(undefined);
 
   useEffect(() => {
     props.firebaseApi.asyncGetEvent(props.eventId!).then((event: EventWithId | null) => {
@@ -25,14 +26,31 @@ const EventViewModeBase = (props: {
       setAuthor(userInfo);
     });
   }, [event?.userId]);
+  useEffect(() => {
+    if (event == null) {
+      return;
+    }
+    if (event.imageHandle === null) {
+      setImageUrl(null);
+      return;
+    }
+    props.firebaseApi.asyncGetURLFromHandle(event.imageHandle).then((url) => {
+      setImageUrl(url);
+    });
+  }, [event?.imageHandle]);
 
   if (props.eventId == null) {
     return <Typography>Something went wrong...</Typography>;
   }
-  if (event === null || author === null) {
+  if (event === null || author === null || imageUrl === undefined) {
     return <CircularProgress />;
   }
+  let image = null;
+  if (imageUrl) {
+    image = <img src={imageUrl} width={200} />;
+  }
   return (<Stack>
+    {image}
     <Typography>{`Title: ${event.title}`}</Typography>
     <Typography>{`Author: ${author.username}`}</Typography>
     <Typography>{`Created Time: ${event.createdTime}`}</Typography>
