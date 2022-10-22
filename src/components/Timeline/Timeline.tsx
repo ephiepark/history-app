@@ -1,7 +1,9 @@
-import { CircularProgress, Typography } from "@mui/material";
+import { CircularProgress } from "@mui/material";
+import { Stack } from "@mui/system";
 import { useEffect, useState } from "react";
 import { withFirebaseApi, WithFirebaseApiProps } from "../../Firebase";
 import { EventWithId } from "../../types";
+import EventCard from "../Event/EventCard";
 
 const TimelineBase = (props: WithFirebaseApiProps) => {
   const [events, setEvents] = useState<null | Array<EventWithId>>(null);
@@ -12,7 +14,9 @@ const TimelineBase = (props: WithFirebaseApiProps) => {
   if (events === null) {
     return <CircularProgress />;
   }
-  return <>{events.map((event) => <Typography key={event.id}>{event.title}</Typography>)}</>;
+  return <Stack spacing={2}>
+    {events.map((event) => <EventCard key={event.id} event={event} />)}
+  </Stack>;
 };
 
 export default withFirebaseApi(TimelineBase);
