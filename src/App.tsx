@@ -14,6 +14,7 @@ import {
   Route,
 } from "react-router-dom";
 import EventViewer from './components/Event/EventViewer';
+import Timeline from './components/Timeline/Timeline';
 
 
 const isLoadingState = (state: RootState): boolean => {
@@ -44,10 +45,7 @@ const Body = () => {
   }
   return (
     <Routes>
-      <Route path="/" element={<>
-        <Typography>{`Welcome ${userInfo.username}`}</Typography>
-        <EditProfile />
-      </>} />
+      <Route path="/" element={<Timeline />} />
       <Route path="/event/new" element={<EventEditor />} />
       <Route path="/event/:eventId" element={<EventViewer />} />
     </Routes>
