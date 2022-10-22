@@ -45,6 +45,7 @@ const EventEditModeBase = (props: {
         tags,
         userId: userId!,
         createdTime: Math.floor(Date.now() / 1000),
+        imageHandle: null,
       });
       props.onClick(event.id);
     } else {

@@ -14,6 +14,7 @@ export interface Event {
   userId: string;
   eventTime: string;
   createdTime: number;
+  imageHandle: string | null;
 };
 
 export interface WithId {

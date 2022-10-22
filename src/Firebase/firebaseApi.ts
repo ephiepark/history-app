@@ -102,6 +102,7 @@ export default class FirebaseApi {
       userId: doc.data()!.userId,
       eventTime: doc.data()!.eventTime,
       createdTime: doc.data()!.createdTime,
+      imageHandle: doc.data()!.imageHandle ?? null,
       id: doc.id,
     }
   };
