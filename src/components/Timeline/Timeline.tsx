@@ -42,6 +42,7 @@ const TimelineBase = (props: WithFirebaseApiProps) => {
           placeholder="Tags"
         />
       )}
+      getOptionLabel={(option) => option.tagName}
     />
     {body}
   </Stack>;

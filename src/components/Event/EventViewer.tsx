@@ -1,14 +1,17 @@
 import { WithFirebaseApiProps, withFirebaseApi } from "../../Firebase";
 import { Box, Stack, TextField, Button, CircularProgress, Typography, Autocomplete } from "@mui/material";
 import { useEffect, useState } from "react";
-import { UserInfo } from "../../types";
+import { getTagsFromIds, UserInfo } from "../../types";
 import { useParams } from "react-router-dom";
 import { EventWithId } from "../../types";
 import EventEditor, { EventEditMode } from "./EventEditor";
+import { useAppSelector } from "../../redux/hooks";
+import { RootState } from "../../redux/store";
 
 const EventViewModeBase = (props: {
   eventId: string,
 } & WithFirebaseApiProps) => {
+  const tags = useAppSelector((state: RootState) => state.tag.tags.value!);
   const [event, setEvent] = useState<EventWithId | null>(null);
   const [author, setAuthor] = useState<UserInfo | null>(null);
   const [imageUrl, setImageUrl] = useState<string | null | undefined>(undefined);
@@ -58,8 +61,8 @@ const EventViewModeBase = (props: {
       multiple
       id="tags-outlined"
       filterSelectedOptions
-      options={event.tags}
-      value={event.tags}
+      options={getTagsFromIds(tags, event.tags)}
+      value={getTagsFromIds(tags, event.tags)}
       renderInput={(params) => (
         <TextField
           {...params}
@@ -67,6 +70,7 @@ const EventViewModeBase = (props: {
           placeholder="Tags"
         />
       )}
+      getOptionLabel={(option) => option.tagName}
       readOnly
     />
     <Typography>{`Event Time: ${event.eventTime}`}</Typography>

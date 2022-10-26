@@ -1,10 +1,11 @@
-import { Typography, TextField, Autocomplete, Button, Stack, CircularProgress } from "@mui/material";
+import { Typography, TextField, Autocomplete, Button, Stack, CircularProgress, createFilterOptions } from "@mui/material";
 import { useEffect, useState } from "react";
 import { withFirebaseApi, WithFirebaseApiProps } from "../../Firebase";
 import { EventWithId, Event, TagWithId, getTagsFromIds } from "../../types";
-import { useAppSelector } from "../../redux/hooks";
+import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { RootState } from "../../redux/store";
 import { useNavigate } from 'react-router-dom';
+import { handleCreateTag } from "../../redux/tagSlice";
 
 const ImageSelector = (props: {
   onImageSelect: (file: File | null) => void,
@@ -28,7 +29,7 @@ const EventEditModeBase = (props: {
   eventId: string | null,
   onClick: (eventId: string) => void,
 } & WithFirebaseApiProps) => {
-  const userId = useAppSelector((state: RootState) => state.user.userId);
+  const userId = useAppSelector((state: RootState) => state.user.userId!);
   const tags = useAppSelector((state: RootState) => state.tag.tags.value!);
   const [event, setEvent] = useState<EventWithId | null>(null);
   const [title, setTitle] = useState<string>('');
@@ -37,6 +38,8 @@ const EventEditModeBase = (props: {
   const [description, setDescription] = useState<string>('');
   const [imageUrl, setImageUrl] = useState<string | null | undefined>(undefined);
   const [file, setFile] = useState<File | null>(null);
+  const [inputTag, setInputTag] = useState<string>('');
+  const dispatch = useAppDispatch();
 
   useEffect(() => {
     if (props.eventId === null) {
@@ -70,7 +73,6 @@ const EventEditModeBase = (props: {
 
   const content = props.eventId === null ? 'Add new event' : 'Edit event';
   const handleSubmit = async () => {
-    console.log(description);
     let imageHandle = null;
     if (file !== null) {
       imageHandle = await props.firebaseApi.asyncUploadImage(userId!, file);
@@ -106,6 +108,14 @@ const EventEditModeBase = (props: {
   if (imageUrl) {
     image = <img src={imageUrl} width={200} />;
   }
+  const createTagButton = inputTag.length > 0 ? <Button onClick={() => {
+    dispatch(handleCreateTag(props.firebaseApi, {
+      tagName: inputTag,
+      createdTime: Math.floor(Date.now() / 1000),
+      userId: userId,
+    }))
+    setInputTag('');
+  }}>Create Tag</Button> : null;
   return (
     <Stack spacing={2}>
       <Typography>{content}</Typography>
@@ -135,23 +145,31 @@ const EventEditModeBase = (props: {
           setEventTime(e.target.value);
         }}
       />
-      <Autocomplete
-        multiple
-        id="tags-outlined"
-        options={tags}
-        filterSelectedOptions
-        value={eventTags}
-        onChange={(_e, v) => {
-          setEventTags(v);
-        }}
-        renderInput={(params) => (
-          <TextField
-            {...params}
-            label="tags"
-            placeholder="Tags"
-          />
-        )}
-      />
+      <Stack direction={'row'}>
+        <Autocomplete
+          multiple
+          id="tags-outlined"
+          options={tags}
+          filterSelectedOptions
+          clearOnBlur ={false}
+          inputValue={inputTag}
+          onInputChange={(_e, v) => setInputTag(v)}
+          getOptionLabel={(option) => option.tagName}
+          value={eventTags}
+          onChange={(_e, v) => {
+            setEventTags(v);
+          }}
+          renderInput={(params) => (
+            <TextField
+              {...params}
+              label="tags"
+              placeholder="Tags"
+            />
+          )}
+        />
+        {createTagButton}
+      </Stack>
+
       <TextField
         id="outlined-textarea"
         label="Event Description"

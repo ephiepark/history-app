@@ -56,8 +56,13 @@ export const { setTags } = userSlice.actions;
 export const handleCreateTag =
   (firebaseApi: FirebaseApi, tag: Tag): AppThunk =>
     async (dispatch, getState) => {
-      await firebaseApi.asyncCreateTag(tag);
-      dispatch(asyncGetTags({ firebaseApi }));
+      const existingTags = getState().tag.tags.value;
+      if (existingTags === null) {
+        // TODO throw exception
+        return;
+      }
+      const newTag = await firebaseApi.asyncCreateTag(tag);
+      dispatch(setTags({ value: [...existingTags, newTag], loadState: getState().tag.tags.loadState }));
     };
 
 export const handleDeleteTag =
