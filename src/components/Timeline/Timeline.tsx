@@ -2,16 +2,19 @@ import { Autocomplete, CircularProgress, TextField, Typography } from "@mui/mate
 import { Stack } from "@mui/system";
 import { useEffect, useState } from "react";
 import { withFirebaseApi, WithFirebaseApiProps } from "../../Firebase";
-import { eventTags, EventWithId } from "../../types";
+import { useAppSelector } from "../../redux/hooks";
+import { RootState } from "../../redux/store";
+import { EventWithId, TagWithId } from "../../types";
 import EventCard from "../Event/EventCard";
 
 const TimelineBase = (props: WithFirebaseApiProps) => {
+  const tags = useAppSelector((state: RootState) => state.tag.tags.value!);
   const [events, setEvents] = useState<null | Array<EventWithId>>(null);
-  const [tags, setTags] = useState<Array<string>>(eventTags);
+  const [filterTags, setFilterTags] = useState<Array<TagWithId>>(tags);
   useEffect(() => {
     setEvents(null);
     if (tags.length > 0) {
-      props.firebaseApi.asyncGetTimeline(tags).then((events) => setEvents(events));
+      props.firebaseApi.asyncGetTimeline(tags.map((tag) => tag.id)).then((events) => setEvents(events));
     }
   }, [tags]);
   let body = null;
@@ -26,11 +29,11 @@ const TimelineBase = (props: WithFirebaseApiProps) => {
     <Autocomplete
       multiple
       id="tags-outlined"
-      options={eventTags}
+      options={tags}
       filterSelectedOptions
-      value={tags}
+      value={filterTags}
       onChange={(_e, v) => {
-        setTags(v);
+        setFilterTags(v);
       }}
       renderInput={(params) => (
         <TextField

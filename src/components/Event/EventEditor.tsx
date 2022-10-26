@@ -1,7 +1,7 @@
 import { Typography, TextField, Autocomplete, Button, Stack, CircularProgress } from "@mui/material";
 import { useEffect, useState } from "react";
 import { withFirebaseApi, WithFirebaseApiProps } from "../../Firebase";
-import { eventTags, EventWithId, Event } from "../../types";
+import { EventWithId, Event, TagWithId, getTagsFromIds } from "../../types";
 import { useAppSelector } from "../../redux/hooks";
 import { RootState } from "../../redux/store";
 import { useNavigate } from 'react-router-dom';
@@ -29,10 +29,11 @@ const EventEditModeBase = (props: {
   onClick: (eventId: string) => void,
 } & WithFirebaseApiProps) => {
   const userId = useAppSelector((state: RootState) => state.user.userId);
+  const tags = useAppSelector((state: RootState) => state.tag.tags.value!);
   const [event, setEvent] = useState<EventWithId | null>(null);
   const [title, setTitle] = useState<string>('');
   const [eventTime, setEventTime] = useState<string>('');
-  const [tags, setTags] = useState<Array<string>>([]);
+  const [eventTags, setEventTags] = useState<Array<TagWithId>>([]);
   const [description, setDescription] = useState<string>('');
   const [imageUrl, setImageUrl] = useState<string | null | undefined>(undefined);
   const [file, setFile] = useState<File | null>(null);
@@ -45,7 +46,7 @@ const EventEditModeBase = (props: {
       setEvent(event);
       setTitle(event?.title ?? '');
       setEventTime(event?.eventTime ?? '');
-      setTags(event?.tags ?? []);
+      setEventTags(getTagsFromIds(tags, event?.tags ?? []));
       setDescription(event?.description ?? '');
     });
   }, [props.eventId]);
@@ -79,7 +80,7 @@ const EventEditModeBase = (props: {
         title,
         description,
         eventTime,
-        tags,
+        tags: eventTags.map((tag) => tag.id),
         userId: userId!,
         createdTime: Math.floor(Date.now() / 1000),
         imageHandle: imageHandle,
@@ -90,7 +91,7 @@ const EventEditModeBase = (props: {
         title,
         description,
         eventTime,
-        tags,
+        tags: eventTags.map((tag) => tag.id),
         userId: userId!,
       };
       if (imageHandle !== null) {
@@ -137,11 +138,11 @@ const EventEditModeBase = (props: {
       <Autocomplete
         multiple
         id="tags-outlined"
-        options={eventTags}
+        options={tags}
         filterSelectedOptions
-        value={tags}
+        value={eventTags}
         onChange={(_e, v) => {
-          setTags(v);
+          setEventTags(v);
         }}
         renderInput={(params) => (
           <TextField

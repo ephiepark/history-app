@@ -34,7 +34,7 @@ export type EventWithId = Event & WithId;
 }
  */
 
-export const eventTags = ['한국사', '삼국시대', '조선시대', '근현대사'];
+// export const eventTags = ['한국사', '삼국시대', '조선시대', '근현대사'];
 
 export interface Tag {
   tagName: string;
@@ -43,3 +43,7 @@ export interface Tag {
 };
 
 export type TagWithId = Tag & WithId;
+
+export const getTagsFromIds = (allTags: Array<TagWithId>, tagIds: Array<string>): Array<TagWithId> => {
+  return tagIds.map((tagId) => allTags.find((tag) => tag.id === tagId)!);
+};

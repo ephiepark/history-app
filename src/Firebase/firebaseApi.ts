@@ -118,8 +118,8 @@ export default class FirebaseApi {
     return await this.asyncGetEvent(eventId);
   };
 
-  asyncGetTimeline = async (tags: Array<string>): Promise<Array<EventWithId>> => {
-    const q = query(collection(this.firestore, "events"), where("tags", 'array-contains-any', tags), orderBy("eventTime", "desc"));
+  asyncGetTimeline = async (tagIds: Array<string>): Promise<Array<EventWithId>> => {
+    const q = query(collection(this.firestore, "events"), where("tags", 'array-contains-any', tagIds), orderBy("eventTime", "desc"));
     const querySnapshot = await getDocs(q);
     const events: Array<EventWithId> = [];
     querySnapshot.forEach((doc) => {
