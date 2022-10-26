@@ -35,3 +35,11 @@ export type EventWithId = Event & WithId;
  */
 
 export const eventTags = ['한국사', '삼국시대', '조선시대', '근현대사'];
+
+export interface Tag {
+  tagName: string;
+  createdTime: number;
+  userId: string;
+};
+
+export type TagWithId = Tag & WithId;

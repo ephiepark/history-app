@@ -12,9 +12,9 @@ import {
   Unsubscribe,
   User
 } from "firebase/auth";
-import { addDoc, collection, doc, DocumentData, DocumentReference, DocumentSnapshot, Firestore, getDoc, getDocs, getFirestore, orderBy, query, setDoc, where } from "firebase/firestore";
+import { addDoc, collection, deleteDoc, doc, DocumentData, DocumentReference, DocumentSnapshot, Firestore, getDoc, getDocs, getFirestore, orderBy, query, setDoc, where } from "firebase/firestore";
 import { FirebaseStorage, getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
-import { Event, EventWithId, UserInfo } from "../types";
+import { Event, EventWithId, Tag, TagWithId, UserInfo } from "../types";
 
 export default class FirebaseApi {
   app: FirebaseApp;
@@ -126,5 +126,46 @@ export default class FirebaseApi {
       events.push(this.getEventWithIdFromDocSnapshot(doc));
     });
     return events;
+  };
+
+  getTagWithIdFromDocSnapshot = (doc: DocumentSnapshot<DocumentData>): TagWithId => {
+    return {
+      tagName: doc.data()!.tagName,
+      userId: doc.data()!.userId,
+      createdTime: doc.data()!.createdTime,
+      id: doc.id,
+    }
+  };
+
+  getTagRef = (tagId: string) => {
+    return doc(this.firestore, "tags", tagId);
+  };
+
+  asyncGetTag = async (tagId: string): Promise<TagWithId | null> => {
+    const docSnap = await getDoc(this.getTagRef(tagId));
+    if (!docSnap.exists()) {
+      return null;
+    }
+    return this.getTagWithIdFromDocSnapshot(docSnap);
+  };
+
+  asyncGetTags = async (): Promise<Array<TagWithId>> => {
+    const q = query(collection(this.firestore, "tags"), orderBy("createdTime", "desc"));
+    const querySnapshot = await getDocs(q);
+    const tags: Array<TagWithId> = [];
+    querySnapshot.forEach((doc) => {
+      tags.push(this.getTagWithIdFromDocSnapshot(doc));
+    });
+    return tags;
+  };
+
+  asyncCreateTag = async (tag: Tag): Promise<TagWithId> => {
+    const docRef = await addDoc(collection(this.firestore, "tags"), tag);
+    const tagWithId = await this.asyncGetTag(docRef.id);
+    return tagWithId!;
+  };
+
+  asyncDeleteTag = async (tagId: string): Promise<void> => {
+    await deleteDoc(this.getTagRef(tagId));
   };
 };

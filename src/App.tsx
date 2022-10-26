@@ -15,10 +15,11 @@ import {
 } from "react-router-dom";
 import EventViewer from './components/Event/EventViewer';
 import Timeline from './components/Timeline/Timeline';
+import { asyncGetTags } from './redux/tagSlice';
 
 
 const isLoadingState = (state: RootState): boolean => {
-  return state.user.userId === undefined;
+  return state.user.userId === undefined || state.tag.tags.value === null;
 };
 
 const Body = () => {
@@ -64,6 +65,10 @@ const App = (props: WithFirebaseApiProps) => {
         dispatch(handleUserChange(props.firebaseApi, null));
       }
     });
+  }, []);
+
+  useEffect(() => {
+    dispatch(asyncGetTags({ firebaseApi: props.firebaseApi }));
   }, []);
 
   if (isLoading) {
