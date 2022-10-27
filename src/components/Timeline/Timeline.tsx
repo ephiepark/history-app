@@ -13,12 +13,12 @@ const TimelineBase = (props: WithFirebaseApiProps) => {
   const [filterTags, setFilterTags] = useState<Array<TagWithId>>(tags);
   useEffect(() => {
     setEvents(null);
-    if (tags.length > 0) {
-      props.firebaseApi.asyncGetTimeline(tags.map((tag) => tag.id)).then((events) => setEvents(events));
+    if (filterTags.length > 0) {
+      props.firebaseApi.asyncGetTimeline(filterTags.map((tag) => tag.id)).then((events) => setEvents(events));
     }
-  }, [tags]);
+  }, [filterTags]);
   let body = null;
-  if (tags.length === 0) {
+  if (filterTags.length === 0) {
     body = <Typography>There needs to be at least one tag</Typography>;
   } else if (events === null) {
     body = <CircularProgress />;
