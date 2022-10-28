@@ -17,7 +17,7 @@ const HeaderBase = (
   const button = currentUserId == null ? loginWithGoogleButton : logoutButton;
   return (
     <AppBar position="static">
-      <Toolbar sx={{ width: "100%", maxWidth: 720, margin: "auto" }}>
+      <Toolbar>
         <Typography variant="h6" component="div">
           <Button component={Link} to={'/'} color="inherit">역사민수</Button>
         </Typography>
