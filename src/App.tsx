@@ -2,7 +2,6 @@ import { Box, CircularProgress, Container, Stack, TextField, Typography } from '
 import { useEffect } from 'react';
 import Header from './components/Header';
 import Onboarding from './components/Onboarding';
-import EditProfile from './components/EditProfile';
 import EventEditor from './components/Event/EventEditor';
 import { WithFirebaseApiProps, withFirebaseApi } from './Firebase';
 import { useAppDispatch, useAppSelector } from './redux/hooks';
@@ -16,6 +15,7 @@ import {
 import EventViewer from './components/Event/EventViewer';
 import Timeline from './components/Timeline/Timeline';
 import { asyncGetTags } from './redux/tagSlice';
+import ProfilePage from './components/Profile/ProfilePage';
 
 
 const isLoadingState = (state: RootState): boolean => {
@@ -49,6 +49,7 @@ const Body = () => {
       <Route path="/" element={<Timeline />} />
       <Route path="/event/new" element={<EventEditor />} />
       <Route path="/event/:eventId" element={<EventViewer />} />
+      <Route path="/profile" element={<ProfilePage />} />
     </Routes>
   );
 };

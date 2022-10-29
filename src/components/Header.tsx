@@ -15,6 +15,8 @@ const HeaderBase = (
     <Button color="inherit" onClick={props.firebaseApi.signOut}>Log out</Button>
   );
   const button = currentUserId == null ? loginWithGoogleButton : logoutButton;
+  const profileButton = currentUserId == null ? null : <Button color="inherit" component={Link} to={'/profile'}>Profile</Button>
+
   return (
     <AppBar position="static">
       <Toolbar>
@@ -23,6 +25,7 @@ const HeaderBase = (
         </Typography>
         <Box sx={{ flexGrow: 1 }} />
         <Button component={Link} to={'/event/new'} color="inherit">Add New Event</Button>
+        {profileButton}
         {button}
       </Toolbar>
     </AppBar>

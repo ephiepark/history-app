@@ -1,11 +1,11 @@
 import { Typography, Stack, TextField, Button, IconButton } from "@mui/material";
 import EditIcon from '@mui/icons-material/Edit';
 import { useState, useEffect } from "react";
-import { WithFirebaseApiProps, withFirebaseApi } from "../Firebase";
-import { useAppSelector, useAppDispatch } from "../redux/hooks";
-import { RootState } from "../redux/store";
-import { asyncUpdateUserInfo } from "../redux/userSlice";
-import { UserInfo } from "../types";
+import { WithFirebaseApiProps, withFirebaseApi } from "../../Firebase";
+import { useAppSelector, useAppDispatch } from "../../redux/hooks";
+import { RootState } from "../../redux/store";
+import { asyncUpdateUserInfo } from "../../redux/userSlice";
+import { UserInfo } from "../../types";
 
 const EditProfilePicViewModeBase = (props: WithFirebaseApiProps & {
   userInfo: UserInfo
