@@ -8,6 +8,7 @@ import { EventWithId, getTagsFromIds, UserInfo } from "../../types";
 import { useEffect, useState } from "react";
 import { useAppSelector } from '../../redux/hooks';
 import { RootState } from '../../redux/store';
+import { Link } from 'react-router-dom';
 
 interface ExpandMoreProps extends IconButtonProps {
   expand: boolean;
@@ -92,7 +93,7 @@ const EventCardBase = (props: { event: EventWithId } & WithFirebaseApiProps) => 
             <MoreVertIcon />
           </IconButton>
         }
-        title={props.event.title}
+        title={<Link to={`/event/${props.event.id}`}>{props.event.title}</Link>}
         subheader={props.event.eventTime}
       />
       {cardMedia}
