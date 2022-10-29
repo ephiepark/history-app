@@ -14,7 +14,7 @@ import {
 } from "firebase/auth";
 import { addDoc, collection, deleteDoc, doc, DocumentData, DocumentReference, DocumentSnapshot, Firestore, getDoc, getDocs, getFirestore, orderBy, query, setDoc, where } from "firebase/firestore";
 import { FirebaseStorage, getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
-import { Event, EventWithId, Tag, TagWithId, UserInfo } from "../types";
+import { Event, EventWithId, SavedFilterTagIds, SavedFilterTagIdsWithId, Tag, TagWithId, UserInfo } from "../types";
 
 export default class FirebaseApi {
   app: FirebaseApp;
@@ -167,5 +167,32 @@ export default class FirebaseApi {
 
   asyncDeleteTag = async (tagId: string): Promise<void> => {
     await deleteDoc(this.getTagRef(tagId));
+  };
+
+  getSavedFilterTagIdsWithIdFromDocSnapshot = (doc: DocumentSnapshot<DocumentData>): SavedFilterTagIdsWithId => {
+    return {
+      tagIds: doc.data()!.tagIds,
+      userId: doc.data()!.userId,
+      createdTime: doc.data()!.createdTime,
+      id: doc.id,
+    }
+  };
+
+  getSavedFilterTagIdsRef = (savedFilterTagsIdsId: string) => {
+    return doc(this.firestore, "savedFilterTagIds", savedFilterTagsIdsId);
+  };
+
+  asyncGetSavedFilterTagIds = async (savedFilterTagsIdsId: string): Promise<SavedFilterTagIdsWithId | null> => {
+    const docSnap = await getDoc(this.getSavedFilterTagIdsRef(savedFilterTagsIdsId));
+    if (!docSnap.exists()) {
+      return null;
+    }
+    return this.getSavedFilterTagIdsWithIdFromDocSnapshot(docSnap);
+  };
+
+  asyncCreateSavedFilterTagIds = async (savedFilterTagIds: SavedFilterTagIds): Promise<SavedFilterTagIdsWithId> => {
+    const docRef = await addDoc(collection(this.firestore, "savedFilterTagIds"), savedFilterTagIds);
+    const tagWithId = await this.asyncGetSavedFilterTagIds(docRef.id);
+    return tagWithId!;
   };
 };

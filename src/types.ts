@@ -47,3 +47,11 @@ export type TagWithId = Tag & WithId;
 export const getTagsFromIds = (allTags: Array<TagWithId>, tagIds: Array<string>): Array<TagWithId> => {
   return tagIds.map((tagId) => allTags.find((tag) => tag.id === tagId)!);
 };
+
+export interface SavedFilterTagIds {
+  tagIds: Array<string>;
+  userId: string;
+  createdTime: number;
+};
+
+export type SavedFilterTagIdsWithId = SavedFilterTagIds & WithId;
