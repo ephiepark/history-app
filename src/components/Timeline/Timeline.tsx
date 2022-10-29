@@ -32,9 +32,8 @@ const TimelineBase = (props: WithFirebaseApiProps) => {
     if (filterTags == null) {
       return;
     }
-    if (filterTags.length > 0) {
-      props.firebaseApi.asyncGetTimeline(filterTags.map((tag) => tag.id)).then((events) => setEvents(events));
-    }
+    const filterTagIds = filterTags.length == 0 ? tags.map((tag) => tag.id) : filterTags.map((tag) => tag.id);
+    props.firebaseApi.asyncGetTimeline(filterTagIds).then((events) => setEvents(events));
   }, [filterTags]);
   let body = null;
   if (filterTags == null) {
