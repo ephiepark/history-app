@@ -1,9 +1,9 @@
 import { Typography, Stack, TextField, Button } from "@mui/material";
 import { useState } from "react";
-import { WithFirebaseApiProps, withFirebaseApi } from "../Firebase";
-import { useAppSelector, useAppDispatch } from "../redux/hooks";
-import { RootState } from "../redux/store";
-import { asyncSetUserInfo } from "../redux/userSlice";
+import { WithFirebaseApiProps, withFirebaseApi } from "../../Firebase";
+import { useAppSelector, useAppDispatch } from "../../redux/hooks";
+import { RootState } from "../../redux/store";
+import { asyncSetUserInfo } from "../../redux/userSlice";
 
 const OnboardingBase = (props: WithFirebaseApiProps) => {
   const userId = useAppSelector((state: RootState) => state.user.userId);
