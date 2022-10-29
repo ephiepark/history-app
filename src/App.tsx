@@ -47,6 +47,7 @@ const Body = () => {
   return (
     <Routes>
       <Route path="/" element={<Timeline />} />
+      <Route path="/savedFilterTagIds/:savedFilterTagIdsId" element={<Timeline />} />
       <Route path="/event/new" element={<EventEditor />} />
       <Route path="/event/:eventId" element={<EventViewer />} />
       <Route path="/profile" element={<ProfilePage />} />
