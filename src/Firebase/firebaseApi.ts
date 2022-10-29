@@ -195,4 +195,14 @@ export default class FirebaseApi {
     const tagWithId = await this.asyncGetSavedFilterTagIds(docRef.id);
     return tagWithId!;
   };
+
+  asyncGetAllSavedFilterTagIds = async (userId: string): Promise<Array<SavedFilterTagIdsWithId>> => {
+    const q = query(collection(this.firestore, "savedFilterTagIds"), where("userId", "==", userId), orderBy("createdTime", "desc"));
+    const querySnapshot = await getDocs(q);
+    const savedFilterTagIds: Array<SavedFilterTagIdsWithId> = [];
+    querySnapshot.forEach((doc) => {
+      savedFilterTagIds.push(this.getSavedFilterTagIdsWithIdFromDocSnapshot(doc));
+    });
+    return savedFilterTagIds;
+  };
 };
