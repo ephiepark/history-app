@@ -4,7 +4,7 @@ import Timeline from "./Timeline";
 
 export default () => {
   const [timelineKeys, setTimelineKeys] = useState<Array<string>>(['main']);
-  const addTimelineButton = timelineKeys.length > 3 ? null : <Button onClick={() => {
+  const addTimelineButton = timelineKeys.length >= 3 ? null : <Button onClick={() => {
     setTimelineKeys([...timelineKeys, `${Math.floor(Date.now() / 1000)}`]);
   }}>Add Timeline</Button>;
   return <Grid container spacing={2}>
