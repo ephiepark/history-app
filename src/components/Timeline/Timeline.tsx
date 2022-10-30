@@ -1,79 +1,64 @@
-import { Autocomplete, Button, CircularProgress, TextField, Typography } from "@mui/material";
-import { Stack } from "@mui/system";
+import { Autocomplete, TextField} from "@mui/material";
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
 import { withFirebaseApi, WithFirebaseApiProps } from "../../Firebase";
 import { useAppSelector } from "../../redux/hooks";
 import { RootState } from "../../redux/store";
-import { EventWithId, getTagsFromIds, TagWithId } from "../../types";
+import { EventWithId, TagWithId } from "../../types";
 import EventCard from "../Event/EventCard";
 
-const TimelineBase = (props: WithFirebaseApiProps) => {
-  const currentUserId = useAppSelector((state: RootState) => state.user.userId!);
+export interface EventWithTimelineMetadata {
+  event: EventWithId;
+  timelineMetadata: {
+    timelineKey: string;
+  };
+};
+
+export const TimelineViewer = (props: {
+  events: Array<EventWithTimelineMetadata>
+}) => {
+  return <>
+    {props.events.map((event) => <EventCard key={`${event.timelineMetadata.timelineKey}-${event.event.id}`} event={event.event} />)}
+  </>;
+};
+
+const TimelineFilterBase = (props: {
+  timelineKey: string,
+  setEvents: (timelineKey: string, events: null | Array<EventWithId>) => void,
+} & WithFirebaseApiProps) => {
   const tags = useAppSelector((state: RootState) => state.tag.tags.value!);
-  const [events, setEvents] = useState<null | Array<EventWithId>>(null);
-  const [filterTags, setFilterTags] = useState<Array<TagWithId> | null>(null);
-  const params = useParams();
+  const [filterTags, setFilterTags] = useState<Array<TagWithId>>(tags);
 
   useEffect(() => {
-    if (params.savedFilterTagIdsId == null) {
-      setFilterTags(tags);
-      return;
-    }
-    props.firebaseApi.asyncGetSavedFilterTagIds(params.savedFilterTagIdsId).then((savedFilterTagIds) => {
-      if (savedFilterTagIds == null) {
-        return;
-      }
-      setFilterTags(getTagsFromIds(tags, savedFilterTagIds.tagIds));
-    })
-  }, [params.savedFilterTagIdsId]);
-  useEffect(() => {
-    setEvents(null);
+    console.log(filterTags);
+    props.setEvents(props.timelineKey, null);
     if (filterTags == null) {
       return;
     }
     const filterTagIds = filterTags.length == 0 ? tags.map((tag) => tag.id) : filterTags.map((tag) => tag.id);
-    props.firebaseApi.asyncGetTimeline(filterTagIds).then((events) => setEvents(events));
+    props.firebaseApi.asyncGetTimeline(filterTagIds).then((events) => {
+      props.setEvents(props.timelineKey, events)
+    });
   }, [filterTags]);
-  let body = null;
-  if (filterTags == null) {
-    return <CircularProgress />;
-  }
-  if (events === null) {
-    body = <CircularProgress />;
-  } else {
-    body = events.map((event) => <EventCard key={event.id} event={event} />);
-  }
-  return <Stack spacing={2}>
-    <Stack direction={'row'}>
-      <Autocomplete
-        multiple
-        id="tags-outlined"
-        options={tags}
-        filterSelectedOptions
-        value={filterTags}
-        onChange={(_e, v) => {
-          setFilterTags(v);
-        }}
-        renderInput={(params) => (
-          <TextField
-            {...params}
-            label="tags"
-            placeholder="Tags"
-          />
-        )}
-        getOptionLabel={(option) => option.tagName}
-      />
-      <Button onClick={async () => {
-        await props.firebaseApi.asyncCreateSavedFilterTagIds({
-          tagIds: filterTags.map((tag) => tag.id),
-          userId: currentUserId,
-          createdTime: Math.floor(Date.now() / 1000),
-        });
-      }}>Save Filter</Button>
-    </Stack>
-    {body}
-  </Stack>;
+
+  return (
+    <Autocomplete
+      multiple
+      options={tags}
+      filterSelectedOptions
+      value={filterTags}
+      onChange={(_e, v) => {
+        setFilterTags(v);
+      }}
+      renderInput={(params) => (
+        <TextField
+          {...params}
+          label="tags"
+          placeholder="Tags"
+        />
+      )}
+      getOptionLabel={(option) => option.tagName}
+    />
+  );
 };
 
-export default withFirebaseApi(TimelineBase);
+export const TimelineFilter = withFirebaseApi(TimelineFilterBase);
