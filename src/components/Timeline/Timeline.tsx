@@ -1,4 +1,4 @@
-import { Autocomplete, TextField} from "@mui/material";
+import { Autocomplete, Grid, TextField } from "@mui/material";
 import { useEffect, useState } from "react";
 import { withFirebaseApi, WithFirebaseApiProps } from "../../Firebase";
 import { useAppSelector } from "../../redux/hooks";
@@ -10,14 +10,32 @@ export interface EventWithTimelineMetadata {
   event: EventWithId;
   timelineMetadata: {
     timelineKey: string;
+    index: number;
   };
 };
 
 export const TimelineViewer = (props: {
+  spacing: number,
+  columnSize: number,
   events: Array<EventWithTimelineMetadata>
+  numTimeline: number,
 }) => {
   return <>
-    {props.events.map((event) => <EventCard key={`${event.timelineMetadata.timelineKey}-${event.event.id}`} event={event.event} />)}
+    {props.events.map((event) => {
+      const row = [];
+      for (let i = 0; i < props.numTimeline; i++) {
+        if (i !== event.timelineMetadata.index) {
+          row.push(<Grid item key={i} xs={props.columnSize}></Grid>);
+        } else {
+          row.push(<Grid item key={i} xs={props.columnSize}>
+            <EventCard event={event.event} />
+          </Grid>);
+        }
+      }
+      return (<Grid container spacing={props.spacing} key={`${event.timelineMetadata.timelineKey}-${event.event.id}`}>
+        {row}
+      </Grid>);
+    })}
   </>;
 };
 
@@ -29,7 +47,6 @@ const TimelineFilterBase = (props: {
   const [filterTags, setFilterTags] = useState<Array<TagWithId>>(tags);
 
   useEffect(() => {
-    console.log(filterTags);
     props.setEvents(props.timelineKey, null);
     if (filterTags == null) {
       return;

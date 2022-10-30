@@ -7,10 +7,11 @@ const mergeTimelineEvents = (timelines: Array<{
   timelineKey: string,
   events: Array<EventWithId> | null,
 }>): Array<EventWithTimelineMetadata> => {
-  const allEvents = timelines.map((timeline) => timeline.events?.map((event) => {
+  const allEvents = timelines.map((timeline, index) => timeline.events?.map((event) => {
     return {
       timelineMetadata: {
         timelineKey: timeline.timelineKey,
+        index: index,
       },
       event: event,
     };
@@ -44,7 +45,7 @@ export default () => {
     ]);
   }}>Add Timeline</Button>;
   const isLoading = timelines.some((timeline) => timeline.events === null);
-  const body = isLoading ? <CircularProgress /> : <TimelineViewer events={mergeTimelineEvents(timelines)} />;
+  const body = isLoading ? <CircularProgress /> : <TimelineViewer events={mergeTimelineEvents(timelines)} columnSize={6} spacing={2} numTimeline={timelines.length} />;
   return <Stack>
     {addTimelineButton}
     <Grid container spacing={2}>
