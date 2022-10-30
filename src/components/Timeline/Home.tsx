@@ -45,7 +45,7 @@ export default () => {
     ]);
   }}>Add Timeline</Button>;
   const isLoading = timelines.some((timeline) => timeline.events === null);
-  const body = isLoading ? <CircularProgress /> : <TimelineViewer events={mergeTimelineEvents(timelines)} columnSize={6} spacing={2} numTimeline={timelines.length} />;
+  const body = isLoading ? <CircularProgress /> : <TimelineViewer events={mergeTimelineEvents(timelines)} columnSize={12 / timelines.length} spacing={2} numTimeline={timelines.length} />;
   return <Stack>
     {addTimelineButton}
     <Grid container spacing={2}>
