@@ -74,13 +74,12 @@ const EventCardBase = (props: { event: EventWithId } & WithFirebaseApiProps) => 
 
   const cardMedia = eventImageUrl == null ? null : <CardMedia
     component="img"
-    height="345"
     image={eventImageUrl ?? undefined}
     alt={'Add Image'}
   />;
 
   return (
-    <Card sx={{ maxWidth: 345 }}>
+    <Card sx={{maxWidth: 500}}>
       <CardHeader
         avatar={
           <Avatar
