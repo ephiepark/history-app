@@ -16,6 +16,7 @@ import EventViewer from './components/Event/EventViewer';
 import Timeline from './components/Timeline/Timeline';
 import { asyncGetTags } from './redux/tagSlice';
 import ProfilePage from './components/Profile/ProfilePage';
+import Home from './components/Timeline/Home';
 
 
 const isLoadingState = (state: RootState): boolean => {
@@ -46,7 +47,7 @@ const Body = () => {
   }
   return (
     <Routes>
-      <Route path="/" element={<Timeline />} />
+      <Route path="/" element={<Home />} />
       <Route path="/savedFilterTagIds/:savedFilterTagIdsId" element={<Timeline />} />
       <Route path="/event/new" element={<EventEditor />} />
       <Route path="/event/:eventId" element={<EventViewer />} />
