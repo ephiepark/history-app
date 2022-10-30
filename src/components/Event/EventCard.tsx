@@ -81,17 +81,17 @@ const EventCardBase = (props: { event: EventWithId } & WithFirebaseApiProps) => 
   return (
     <Card sx={{maxWidth: 500}}>
       <CardHeader
-        avatar={
-          <Avatar
-            alt={author?.username}
-            src={authorImageUrl ?? undefined}
-          />
-        }
-        action={
-          <IconButton aria-label="settings">
-            <MoreVertIcon />
-          </IconButton>
-        }
+        // avatar={
+        //   <Avatar
+        //     alt={author?.username}
+        //     src={authorImageUrl ?? undefined}
+        //   />
+        // }
+        // action={
+        //   <IconButton aria-label="settings">
+        //     <MoreVertIcon />
+        //   </IconButton>
+        // }
         title={<Link to={`/event/${props.event.id}`}>{props.event.title}</Link>}
         subheader={props.event.eventTime}
       />
