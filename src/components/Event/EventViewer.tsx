@@ -2,7 +2,7 @@ import { WithFirebaseApiProps, withFirebaseApi } from "../../Firebase";
 import { Box, Stack, TextField, Button, CircularProgress, Typography, Autocomplete } from "@mui/material";
 import { useEffect, useState } from "react";
 import { getTagsFromIds, UserInfo } from "../../types";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { EventWithId } from "../../types";
 import EventEditor, { EventEditMode } from "./EventEditor";
 import { useAppSelector } from "../../redux/hooks";
@@ -15,12 +15,13 @@ const EventViewModeBase = (props: {
   const [event, setEvent] = useState<EventWithId | null>(null);
   const [author, setAuthor] = useState<UserInfo | null>(null);
   const [imageUrl, setImageUrl] = useState<string | null | undefined>(undefined);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    props.firebaseApi.asyncGetEvent(props.eventId!).then((event: EventWithId | null) => {
+    props.firebaseApi.asyncGetEvent(props.eventId).then((event: EventWithId | null) => {
       setEvent(event);
     });
-  }, []);
+  }, [props.eventId]);
   useEffect(() => {
     if (event?.userId == null) {
       return;
@@ -75,6 +76,10 @@ const EventViewModeBase = (props: {
     />
     <Typography>{`Event Time: ${event.eventTime}`}</Typography>
     <Typography>{`Description: ${event.description}`}</Typography>
+    <Button onClick={async () => {
+      await props.firebaseApi.asyncDeleteEvent(props.eventId);
+      navigate(`/`);
+    }}>Delete Event</Button>
   </Stack>);
 };
 

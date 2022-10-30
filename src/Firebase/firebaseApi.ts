@@ -118,6 +118,10 @@ export default class FirebaseApi {
     return await this.asyncGetEvent(eventId);
   };
 
+  asyncDeleteEvent = async (eventId: string) => {
+    await deleteDoc(this.getEventRef(eventId));
+  };
+
   asyncGetTimeline = async (tagIds: Array<string>): Promise<Array<EventWithId>> => {
     const q = query(collection(this.firestore, "events"), where("tags", 'array-contains-any', tagIds), orderBy("eventTime", "desc"));
     const querySnapshot = await getDocs(q);
