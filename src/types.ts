@@ -48,10 +48,14 @@ export const getTagsFromIds = (allTags: Array<TagWithId>, tagIds: Array<string>)
   return tagIds.map((tagId) => allTags.find((tag) => tag.id === tagId)!);
 };
 
-export interface SavedFilterTagIds {
+export interface Filter {
   tagIds: Array<string>;
+};
+
+export interface SavedFilter {
+  savedFilters: Array<Filter>;
   userId: string;
   createdTime: number;
 };
 
-export type SavedFilterTagIdsWithId = SavedFilterTagIds & WithId;
+export type SavedFilterWithId = SavedFilter & WithId;

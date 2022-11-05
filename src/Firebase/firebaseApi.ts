@@ -14,7 +14,7 @@ import {
 } from "firebase/auth";
 import { addDoc, collection, deleteDoc, doc, DocumentData, DocumentReference, DocumentSnapshot, Firestore, getDoc, getDocs, getFirestore, orderBy, query, setDoc, where } from "firebase/firestore";
 import { FirebaseStorage, getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
-import { Event, EventWithId, SavedFilterTagIds, SavedFilterTagIdsWithId, Tag, TagWithId, UserInfo } from "../types";
+import { Event, EventWithId, SavedFilter, SavedFilterWithId, Tag, TagWithId, UserInfo } from "../types";
 
 export default class FirebaseApi {
   app: FirebaseApp;
@@ -173,39 +173,39 @@ export default class FirebaseApi {
     await deleteDoc(this.getTagRef(tagId));
   };
 
-  getSavedFilterTagIdsWithIdFromDocSnapshot = (doc: DocumentSnapshot<DocumentData>): SavedFilterTagIdsWithId => {
+  getSavedFilterWithIdFromDocSnapshot = (doc: DocumentSnapshot<DocumentData>): SavedFilterWithId => {
     return {
-      tagIds: doc.data()!.tagIds,
+      savedFilters: doc.data()!.savedFilters,
       userId: doc.data()!.userId,
       createdTime: doc.data()!.createdTime,
       id: doc.id,
     }
   };
 
-  getSavedFilterTagIdsRef = (savedFilterTagsIdsId: string) => {
-    return doc(this.firestore, "savedFilterTagIds", savedFilterTagsIdsId);
+  getSavedFilterRef = (savedFilterId: string) => {
+    return doc(this.firestore, "savedFilters", savedFilterId);
   };
 
-  asyncGetSavedFilterTagIds = async (savedFilterTagsIdsId: string): Promise<SavedFilterTagIdsWithId | null> => {
-    const docSnap = await getDoc(this.getSavedFilterTagIdsRef(savedFilterTagsIdsId));
+  asyncGetSavedFilter = async (savedFilterId: string): Promise<SavedFilterWithId | null> => {
+    const docSnap = await getDoc(this.getSavedFilterRef(savedFilterId));
     if (!docSnap.exists()) {
       return null;
     }
-    return this.getSavedFilterTagIdsWithIdFromDocSnapshot(docSnap);
+    return this.getSavedFilterWithIdFromDocSnapshot(docSnap);
   };
 
-  asyncCreateSavedFilterTagIds = async (savedFilterTagIds: SavedFilterTagIds): Promise<SavedFilterTagIdsWithId> => {
-    const docRef = await addDoc(collection(this.firestore, "savedFilterTagIds"), savedFilterTagIds);
-    const tagWithId = await this.asyncGetSavedFilterTagIds(docRef.id);
+  asyncCreateSavedFilter = async (savedFilter: SavedFilter): Promise<SavedFilterWithId> => {
+    const docRef = await addDoc(collection(this.firestore, "savedFilters"), savedFilter);
+    const tagWithId = await this.asyncGetSavedFilter(docRef.id);
     return tagWithId!;
   };
 
-  asyncGetAllSavedFilterTagIds = async (userId: string): Promise<Array<SavedFilterTagIdsWithId>> => {
-    const q = query(collection(this.firestore, "savedFilterTagIds"), where("userId", "==", userId), orderBy("createdTime", "desc"));
+  asyncGetAllSavedFilters = async (userId: string): Promise<Array<SavedFilterWithId>> => {
+    const q = query(collection(this.firestore, "savedFilters"), where("userId", "==", userId), orderBy("createdTime", "desc"));
     const querySnapshot = await getDocs(q);
-    const savedFilterTagIds: Array<SavedFilterTagIdsWithId> = [];
+    const savedFilterTagIds: Array<SavedFilterWithId> = [];
     querySnapshot.forEach((doc) => {
-      savedFilterTagIds.push(this.getSavedFilterTagIdsWithIdFromDocSnapshot(doc));
+      savedFilterTagIds.push(this.getSavedFilterWithIdFromDocSnapshot(doc));
     });
     return savedFilterTagIds;
   };

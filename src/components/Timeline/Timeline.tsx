@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { withFirebaseApi, WithFirebaseApiProps } from "../../Firebase";
 import { useAppSelector } from "../../redux/hooks";
 import { RootState } from "../../redux/store";
-import { EventWithId, TagWithId } from "../../types";
+import { EventWithId, Filter, getTagsFromIds, TagWithId } from "../../types";
 import EventCard from "../Event/EventCard";
 
 export interface EventWithTimelineMetadata {
@@ -41,30 +41,31 @@ export const TimelineViewer = (props: {
 
 const TimelineFilterBase = (props: {
   timelineKey: string,
+  filter: Filter,
+  setFilter: (timelineKey: string, filter: Filter) => void,
   setEvents: (timelineKey: string, events: null | Array<EventWithId>) => void,
 } & WithFirebaseApiProps) => {
   const tags = useAppSelector((state: RootState) => state.tag.tags.value!);
-  const [filterTags, setFilterTags] = useState<Array<TagWithId>>(tags);
+  // const [filterTags, setFilterTags] = useState<Array<TagWithId>>(tags);
 
   useEffect(() => {
     props.setEvents(props.timelineKey, null);
-    if (filterTags == null) {
-      return;
-    }
-    const filterTagIds = filterTags.length == 0 ? tags.map((tag) => tag.id) : filterTags.map((tag) => tag.id);
+    const filterTagIds = props.filter.tagIds.length == 0 ? tags.map((tag) => tag.id) : props.filter.tagIds;
     props.firebaseApi.asyncGetTimeline(filterTagIds).then((events) => {
       props.setEvents(props.timelineKey, events)
     });
-  }, [filterTags]);
+  }, [props.filter]);
 
   return (
     <Autocomplete
       multiple
       options={tags}
       filterSelectedOptions
-      value={filterTags}
+      value={getTagsFromIds(tags, props.filter.tagIds)}
       onChange={(_e, v) => {
-        setFilterTags(v);
+        props.setFilter(props.timelineKey, {
+          tagIds: v.map((tag) => tag.id),
+        });
       }}
       renderInput={(params) => (
         <TextField
