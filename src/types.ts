@@ -1,6 +1,7 @@
 export interface UserInfo {
   username: string;
   profilePicHandle: string | null;
+  isEditor: boolean;
 };
 
 export interface WithLoadingState {

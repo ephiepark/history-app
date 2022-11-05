@@ -11,6 +11,7 @@ import { RootState } from "../../redux/store";
 const EventViewModeBase = (props: {
   eventId: string,
 } & WithFirebaseApiProps) => {
+  const currentUserInfo = useAppSelector((state: RootState) => state.user.userInfo.value!);
   const tags = useAppSelector((state: RootState) => state.tag.tags.value!);
   const [event, setEvent] = useState<EventWithId | null>(null);
   const [author, setAuthor] = useState<UserInfo | null>(null);
@@ -53,6 +54,10 @@ const EventViewModeBase = (props: {
   if (imageUrl) {
     image = <img src={imageUrl} width={200} />;
   }
+  const deleteEventButton = <Button onClick={async () => {
+    await props.firebaseApi.asyncDeleteEvent(props.eventId);
+    navigate(`/`);
+  }}>Delete Event</Button>;
   return (<Stack>
     {image}
     <Typography>{`Title: ${event.title}`}</Typography>
@@ -76,16 +81,14 @@ const EventViewModeBase = (props: {
     />
     <Typography>{`Event Time: ${event.eventTime}`}</Typography>
     <Typography>{`Description: ${event.description}`}</Typography>
-    <Button onClick={async () => {
-      await props.firebaseApi.asyncDeleteEvent(props.eventId);
-      navigate(`/`);
-    }}>Delete Event</Button>
+    {currentUserInfo.isEditor ? deleteEventButton : null}
   </Stack>);
 };
 
 const EventViewMode = withFirebaseApi(EventViewModeBase);
 
 const EventViewerBase = (props: WithFirebaseApiProps) => {
+  const currentUserInfo = useAppSelector((state: RootState) => state.user.userInfo.value!);
   const [isEditMode, setIsEditMode] = useState<boolean>(false);
   const params = useParams();
 
@@ -101,7 +104,7 @@ const EventViewerBase = (props: WithFirebaseApiProps) => {
   const button = isEditMode ? <Button variant="contained" onClick={() => { setIsEditMode(false) }}>Cancel Edit</Button> : <Button variant="contained" onClick={() => { setIsEditMode(true) }}>Edit</Button>;
   return (<Stack>
     {body}
-    {button}
+    {currentUserInfo.isEditor ? button : null}
   </Stack>);
 }
 

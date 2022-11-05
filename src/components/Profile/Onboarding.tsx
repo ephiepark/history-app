@@ -51,6 +51,7 @@ const OnboardingBase = (props: WithFirebaseApiProps) => {
           userInfo: {
             username: username,
             profilePicHandle: handle,
+            isEditor: false,
           },
         }))
       }}

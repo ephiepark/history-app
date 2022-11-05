@@ -67,6 +67,7 @@ export default class FirebaseApi {
     return {
       username: docSnap.data().username,
       profilePicHandle: docSnap.data().profilePicHandle ?? null,
+      isEditor: docSnap.data().isEditor ?? false,
     };
   };
 
